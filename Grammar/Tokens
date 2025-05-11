@@ -1,0 +1,43 @@
+# MBase tokens
+# When adding new tokens, remember to update the grammar file accordingly.
+
+ENDMARKER
+NEWLINE
+INDENT
+DEDENT
+
+NAME                    # identifiers
+NUMBER                  # int or float
+STRING                  # string literal
+BASE_LITERAL            # e.g. 16@1F or 64@(A+)
+
+# Operators and delimiters
+LPAR                    '('
+RPAR                    ')'
+LBRACE                  '{'
+RBRACE                  '}'
+COMMA                   ','
+SEMI                    ';'
+EQUAL                   '='
+PLUS                    '+'
+MINUS                   '-'
+STAR                    '*'
+SLASH                   '/'
+PERCENT                 '%'
+CARET                   '^'
+AT                      '@'
+
+# Keywords
+FUNC                    'func'
+OUT                     'out'
+INPUT                   'input'
+
+# Built-in function names
+BUILTIN                 # sqrt, abs, to_base, etc.
+
+# String Interpolation Tokens (used inside out())
+INTERP_START            '{'
+INTERP_END              '}'
+
+COMMENT                 # starts with '#', to end of line
+ERRORTOKEN              # for unknown/invalid characters

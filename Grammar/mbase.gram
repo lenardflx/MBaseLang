@@ -1,0 +1,64 @@
+# MBase — PEG grammar
+
+start[Stmt*]: stmt+
+
+stmt[Stmt]:
+    | simple_stmt NEWLINE
+    | COMMENT NEWLINE
+
+simple_stmt[Stmt]:
+    | assignment
+    | output_stmt
+    | input_stmt
+    | expr ";"
+
+assignment[Stmt]:
+    | NAME "=" expr ";"
+
+input_stmt[Stmt]:
+    | NAME "=" "input" "(" STRING ")"
+
+output_stmt[Stmt]:
+    | "out" "(" interpolated_string ")"
+
+interpolated_string[InterpolatedStr]:
+    | STRING
+    | STRING_PART* FSTRING_END
+
+STRING_PART:
+    | STRING
+    | INTERP_START expr INTERP_END
+
+expr[Expr]:
+    | expr "+" term   { BinaryOp('+', expr, term) }
+    | expr "-" term   { BinaryOp('-', expr, term) }
+    | term
+
+term[Expr]:
+    | term "*" factor { BinaryOp('*', term, factor) }
+    | term "/" factor { BinaryOp('/', term, factor) }
+    | term "%" factor { BinaryOp('%', term, factor) }
+    | term "^" factor { BinaryOp('^', term, factor) }
+    | factor
+
+factor[Expr]:
+    | "-" factor      { UnaryOp('-', factor) }
+    | atom
+
+atom[Expr]:
+    | NUMBER
+    | BASE_LITERAL
+    | STRING
+    | NAME
+    | func_call
+    | "(" expr ")"
+
+func_call[Expr]:
+    | NAME "(" [args] ")"
+
+args[Args]:
+    | expr ("," expr)*
+
+COMMENT:
+    | "#" ~[\n]*
+

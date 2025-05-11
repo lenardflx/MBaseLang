@@ -1,0 +1,26 @@
+# Define a function to convert to binary (base 2)
+fn to_bin(b10 num) b2 {
+    ret rebase(num, b10@2)
+}
+
+# Convert to octal (base 8)
+fn to_oct(b10 num) b8 {
+    ret rebase(num, b10@8)
+}
+
+# Convert to hexadecimal (base 16)
+fn to_hex(b10 num) b16 {
+    ret rebase(num, b10@16)
+}
+
+
+out("Enter a number: ")
+input_str = in()
+
+# Convert the input string to an integer
+num = number(input_str)
+
+# use formatstring to convert and execute the input
+out("Binary: {to_bin(num)}\n")
+out("Octal: {to_oct(num)}\n")
+out("Hex: {to_hex(num)}\n")
