@@ -15,7 +15,14 @@ class BaseLiteral:
                 raise ValueError(f"Digit '{ch}' not valid in base {self.base}")
 
     def to_int(self) -> int:
-        return int(self.raw, self.base)
+        digits = VALID_DIGITS[:self.base]
+        val = 0
+        for ch in self.raw:
+            idx = digits.find(ch)
+            if idx == -1:
+                raise ValueError(f"Invalid digit '{ch}' for base {self.base}")
+            val = val * self.base + idx
+        return val
 
     @classmethod
     def from_int(cls, base: int, value: int) -> "BaseLiteral":

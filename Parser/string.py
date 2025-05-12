@@ -1,7 +1,5 @@
 from Mbase.error import print_error_with_origin
 from Parser.parse import Parser
-from Parser.token_type import TokenType
-from Parser.token import Token
 from Parser.tokenizer import tokenize
 
 

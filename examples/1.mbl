@@ -1,26 +1,59 @@
-# Define a function to convert to binary (base 2)
-fn to_bin(b10 num) b2 {
-    ret rebase(num, b10@2)
+# Countdown in any base, padded to fixed width
+fn countdown(b_ n) {
+    to_pad = num_len(n)  # Determine digit length (e.g. "1010" → 4)
+
+    while (n > 0) {
+        st = str_baseless(n)        # Get raw string (no base prefix)
+        padded = padstr(st, to_pad) # Pad with leading 0s to match length
+        out("{padded}\n")           # Print current number
+        n = n - 1                   # Decrement
+        wait(1)                     # Wait one second
+    }
+
+    out("Finished!\n")
 }
 
-# Convert to octal (base 8)
-fn to_oct(b10 num) b8 {
-    ret rebase(num, b10@8)
+# Interactive prompt to get number and base, validate input, return rebased value
+fn prompt() b10 {
+    out("What number do you want to count down from? ")
+    inp = in()
+    n = number(inp)
+
+    if (n < 0) {
+        out("Please enter a positive number.\n")
+        ret prompt()  # Retry prompt on invalid input
+    }
+
+    out("What base do you want to use? (e.g. 2, 10, 16): ")
+    base_input = in()
+    b = number(base_input)
+
+    if (b < 2 || b > 36) {
+        out("Please enter a base between 2 and 36.\n")
+        ret prompt()  # Retry prompt on invalid base
+    }
+
+    converted = rebase(n, b)  # Convert number to requested base
+    ret converted
 }
 
-# Convert to hexadecimal (base 16)
-fn to_hex(b10 num) b16 {
-    ret rebase(num, b10@16)
+# Main loop — keeps running countdowns interactively
+loop@main {
+    n = prompt()  # Ask user for number and base
+    out("Counting down from {n}...\n")
+    countdown(n)  # Do countdown
+
+    loop@redo {
+        out("Do you want to count down again? (1 for yes, 0 for no): ")
+        cont = in()
+        cont = number(cont)  # Convert input to number
+        if (cont == 1) {
+            out("Great! Let's go again.\n")
+            break@redo  # Restart the countdown
+        } else if (cont == 0) {
+            out("Goodbye!\n")
+            break@main # Exit the program
+        }
+        out("Invalid input.\n")
+    }
 }
-
-
-out("Enter a number: ")
-input_str = in()
-
-# Convert the input string to an integer
-num = number(input_str)
-
-# use formatstring to convert and execute the input
-out("Binary: {to_bin(num)}\n")
-out("Octal: {to_oct(num)}\n")
-out("Hex: {to_hex(num)}\n")

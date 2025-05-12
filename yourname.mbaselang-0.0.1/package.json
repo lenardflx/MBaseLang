@@ -1,0 +1,41 @@
+{
+	"name": "mbaselang",
+	"displayName": "MBaseLang",
+	"description": "Syntax highlighting for MBaseLang (.mbl)",
+	"version": "0.0.1",
+	"publisher": "yourname",
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "mbase",
+				"aliases": [
+					"MBaseLang",
+					"mbase"
+				],
+				"extensions": [
+					".mbl"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "mbase",
+				"scopeName": "source.mbase",
+				"path": "./MBaseLang.tmLanguage.json"
+			}
+		]
+	},
+	"__metadata": {
+		"isApplicationScoped": false,
+		"installedTimestamp": 1747083512971,
+		"pinned": true,
+		"source": "vsix"
+	}
+}

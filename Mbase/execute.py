@@ -73,12 +73,25 @@ def _run_buffer(source: str, ctx: dict, filename: str = "<input>"):
             result = evaluate(expr, ctx)
 
             if is_repl:
+                printed = False
+
                 if isinstance(expr, tuple) and expr[0] == "call" and expr[1] == "out":
                     print()
-                if result is not None:
+                    printed = True
+
+                elif result is not None:
                     print(result)
+                    printed = True
+
+                if not printed:
+                    print()
+
 
         except Exception as e:
-            pos = expr[4] if isinstance(expr, tuple) and len(expr) > 4 else None
+            pos = expr[4] if (
+                    isinstance(expr, tuple)
+                    and len(expr) > 4
+                    and isinstance(expr[4], int)
+            ) else None
             print_error_with_origin(source, pos, str(e), ctx["__origin__"]) if pos else print_error(str(e), "[Runtime Error]")
             return

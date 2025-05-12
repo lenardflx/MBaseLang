@@ -1,0 +1,40 @@
+{
+  "name": "MBaseLang",
+  "scopeName": "source.mbase",
+  "fileTypes": ["mbl"],
+  "patterns": [
+    {
+      "match": "\\b(fn|ret|if|else|while|loop|break|continue|in|out|wait|number|rebase|sqrt)\\b",
+      "name": "keyword.control.mbase"
+    },
+    {
+      "match": "\\b(b\\d{1,2})@(?:\\([a-zA-Z0-9]+\\)|[a-zA-Z0-9]+)\\b",
+      "name": "constant.numeric.base"
+    },
+    {
+      "match": "\\b\\d+\\b",
+      "name": "constant.numeric.decimal"
+    },
+    {
+      "match": "\"(\\\\.|[^\"\\\\])*\"",
+      "name": "string.quoted.double.mbase"
+    },
+    {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.mbase"
+    },
+    {
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+      "name": "variable.other.mbase"
+    },
+    {
+      "match": "[+\\-*/%<>!=&|]{1,2}",
+      "name": "keyword.operator.mbase"
+    },
+    {
+      "match": "[{}();,]",
+      "name": "punctuation.separator.mbase"
+    }
+  ],
+  "uuid": "fa12b4aa-4f3e-11ee-b7df-0242ac120002"
+}
