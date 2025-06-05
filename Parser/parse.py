@@ -2,6 +2,19 @@ from Mbase.error import print_error_with_origin
 from Mbase.types import BaseLiteral, Function
 from Parser.token_type import TokenType
 from Parser.token import Token
+from Mbase.ast import (
+    Assign,
+    BinOp,
+    Call,
+    Continue,
+    Break,
+    If,
+    Loop,
+    Return,
+    Text,
+    Var,
+    While,
+)
 
 class Parser:
     def __init__(self, tokens):
@@ -73,7 +86,7 @@ class Parser:
         sep = self.match(TokenType.SEMICOLON, TokenType.NEWLINE)
         if not sep and self.current().type != TokenType.EOF:
             raise SyntaxError(f"Expected end of statement after assignment")
-        return "assign", var_name, expr
+        return Assign(var_name, expr)
 
     def parse_expression(self):
         return self.parse_logical()
@@ -84,7 +97,7 @@ class Parser:
             op = self.current()
             self.advance()
             right = self.parse_equality()
-            expr = ("binop", op.type, expr, right, op.pos)
+            expr = BinOp(op.type, expr, right, op.pos)
         return expr
 
     def parse_equality(self):
@@ -98,7 +111,7 @@ class Parser:
             op = self.current()
             self.advance()
             right = self.parse_comparison()
-            expr = ("binop", op.type, expr, right, op.pos)
+            expr = BinOp(op.type, expr, right, op.pos)
         return expr
 
     def parse_comparison(self):
@@ -112,7 +125,7 @@ class Parser:
             op = self.current()
             self.advance()
             right = self.parse_term()
-            expr = ("binop", op.type, expr, right, op.pos)
+            expr = BinOp(op.type, expr, right, op.pos)
         return expr
 
     def parse_term(self):
@@ -121,7 +134,7 @@ class Parser:
             op = self.current()
             self.advance()
             right = self.parse_factor()
-            expr = ("binop", op.type, expr, right, op.pos)
+            expr = BinOp(op.type, expr, right, op.pos)
         return expr
 
     def parse_factor(self):
@@ -130,7 +143,7 @@ class Parser:
             op = self.current()
             self.advance()
             right = self.parse_primary()
-            expr = ("binop", op.type, expr, right, op.pos)
+            expr = BinOp(op.type, expr, right, op.pos)
         return expr
 
     def parse_primary(self):
@@ -139,7 +152,7 @@ class Parser:
         if tok.type == TokenType.RETURN:
             self.advance()
             expr = self.parse_expression()
-            return "ret", expr, tok.pos
+            return Return(expr, tok.pos)
 
         elif tok.type == TokenType.NUMBER:
             self.advance()
@@ -164,12 +177,12 @@ class Parser:
 
         elif tok.type == TokenType.IDENTIFIER:
             self.advance()
-            return "var", tok.value
+            return Var(tok.value)
 
 
         elif tok.type == TokenType.TEXT:
             self.advance()
-            return "text", tok.value
+            return Text(tok.value)
 
         elif tok.type == TokenType.LPAREN:
             self.advance()
@@ -193,7 +206,7 @@ class Parser:
                 break
 
         self.expect(TokenType.RPAREN)
-        return "call", name_tok.value, args, name_tok.pos
+        return Call(name_tok.value, args, name_tok.pos)
 
     def parse_function(self):
         self.expect(TokenType.FUNCTION)
@@ -242,7 +255,7 @@ class Parser:
             else:
                 else_body = self.parse_block()
 
-        return "if", label, condition, then_body, else_body
+        return If(label, condition, then_body, else_body)
 
     def parse_while_loop(self):
         kind_token = self.current()
@@ -254,11 +267,11 @@ class Parser:
             condition = self.parse_expression()
             self.expect(TokenType.RPAREN)
             body = self.parse_block()
-            return "while", label, condition, body
+            return While(label, condition, body)
 
         elif kind_token.type == TokenType.LOOP:
             body = self.parse_block()
-            return "loop", label, body
+            return Loop(label, body)
         return None
 
     def parse_break_continue(self):
@@ -267,8 +280,10 @@ class Parser:
         label = self.parse_optional_label()
         self.match(TokenType.SEMICOLON, TokenType.NEWLINE)
 
-        kind = "break" if kind_token.type == TokenType.BREAK else "continue"
-        return kind, label
+        if kind_token.type == TokenType.BREAK:
+            return Break(label)
+        else:
+            return Continue(label)
 
     def parse_optional_label(self):
         if self.current().type == TokenType.AT:
@@ -284,9 +299,10 @@ class Parser:
             if self.match(TokenType.NEWLINE, TokenType.SEMICOLON):
                 continue
             if self.current().type == TokenType.RETURN:
+                ret_tok = self.current()
                 self.advance()
                 expr = self.parse_expression()
-                body.append(("ret", expr, self.pos))
+                body.append(Return(expr, ret_tok.pos))
             elif self.current().type == TokenType.IDENTIFIER and self.peek().type == TokenType.ASSIGN:
                 body.append(self.parse_statement())
             else:
