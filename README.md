@@ -3,7 +3,7 @@
 **MBaseLang** is a math-first programming language.  
 This project was created as a small learning experiment to explore language design, interpreters, and symbolic math features.
 
-It is currently implemented in Python, but designed with a structure that can easily be ported to Rust in the future.
+It is currently implemented in Python. A minimal interpreter written in Rust is provided in the `rust/` directory as an experimental rewrite.
 
 ---
 
@@ -33,4 +33,12 @@ python run.py
 
 ```bash
 python run.py examples/1.mbl
+```
+
+### 3. Run the Rust Rewrite
+
+Build the Rust project with Cargo and pass a `.mbl` file:
+
+```bash
+cargo run -p mbaselang_rust -- examples/1.mbl
 ```
